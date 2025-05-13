@@ -1,4 +1,20 @@
-# Leaderboard API Documentation
+# PGR2 Stats Documentation
+
+## Project Structure Overview
+
+- **backend/**: Contains the core API server, database scripts, and data processing utilities. Includes:
+  - API source code (Node.js/Express)
+  - SQLite database and schema
+  - Data import, conversion, and fetch scripts
+  - Supporting libraries and lock files
+- **discord/**: Houses the Discord bot integration, including:
+  - Bot source code and utilities
+  - Scripts for leaderboard interaction via Discord
+  - Package configuration
+- **frontend/**: The web application frontend, built with React. Includes:
+  - Source code (components, services, config, types)
+  - Build and public assets
+  - Project configuration and dependencies
 
 ## Overview
 
