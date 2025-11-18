@@ -1,759 +1,106 @@
-# PGR2 Stats Documentation
+# XBL Total Leaderboard Frontend
 
-## Project Structure Overview
+A modern, dark-mode frontend for visualizing XBL Total leaderboard data with interactive charts.
 
-- **backend/**: Contains the core API server, database scripts, and data processing utilities. Includes:
-  - API source code (Node.js/Express)
-  - SQLite database and schema
-  - Data import, conversion, and fetch scripts
-  - Supporting libraries and lock files
-- **discord/**: Houses the Discord bot integration, including:
-  - Bot source code and utilities
-  - Scripts for leaderboard interaction via Discord
-  - Package configuration
-- **frontend/**: The web application frontend, built with React. Includes:
-  - Source code (components, services, config, types)
-  - Build and public assets
-  - Project configuration and dependencies
+## Features
 
-## Overview
+- **Dark Mode Design**: Modern, sleek dark theme interface
+- **Top 10 Default View**: Automatically loads and displays top 10 players by kudos
+- **Interactive Line Chart**: Shows kudos progression over time (daily snapshots)
+- **Date-based Filtering**: Load data for specific dates and times
+- **User Search**: Search for specific users by name
+- **Custom Chart Selection**: Add individual users to the chart for comparison
+- **Sorting Options**: Sort by kudos, rank, or name
+- **Top N Selection**: View top 10, 25, 50, 100, or all players
 
-This API provides access to a leaderboard database (`leaderboards.db`) containing various gaming leaderboards. It is built using Node.js with Express and SQLite3, allowing clients to retrieve data from multiple tables with filtering capabilities.
+## Installation
 
-## Base URL
-
-```
-http://localhost:3000/api
+```bash
+npm install
 ```
 
-## General Notes
+## Running the Frontend
 
-- All endpoints return JSON responses.
-- Error responses include a JSON object with an `error` field describing the issue.
-- Query parameters are optional and can be combined for filtering.
-- The API supports CORS for cross-origin requests.
-- Dates for `folder_date` and `data_date` should be in SQLite-compatible format (e.g., `YYYY-MM-DD HH:MM:SS`).
-- The `name` filter uses partial matching with `LIKE` (e.g., `?name=John` matches "John", "Johnny", etc.).
-
-## Endpoints
-
-### Arcade
-
-- **GET** `/arcade`
-
-  Retrieves all records from the `Arcade` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/arcade?name=John&folder_date=2025-05-01%2000:00:00
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "JohnDoe",
-      "count_1": 100,
-      "count_2": 50,
-      "count_3": 25,
-      "count_4": 10,
-      "count_5": 5,
-      "count_6": 2,
-      "count_7": 1,
-      "count_8": 0,
-      "count_9": 0,
-      "count_10": 0,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-- **GET** `/arcade/:id`
-
-  Retrieves a single `Arcade` record by ID.
-
-  **Parameters**:
-
-  - `id` (integer): The record ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/arcade/1
-  ```
-
-  **Response**:
-
-  ```json
-  {
-    "id": 1,
-    "name": "JohnDoe",
-    "count_1": 100,
-    ...
-  }
-  ```
-
-### GeometryWars
-
-- **GET** `/geometrywars`
-
-  Retrieves all records from the `GeometryWars` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/geometrywars?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 15,
-      "rank": 1,
-      "name": "Player1",
-      "hiscore": 5000,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-- **GET** `/geometrywars/:id`
-
-  Retrieves a single `GeometryWars` record by ID.
-
-  **Parameters**:
-
-  - `id` (integer): The record ID.
-
-  **Response**:
-
-  ```json
-  {
-    "id": 1,
-    "leaderboard_id": 101,
-    "rank": 1,
-    "name": "Player1",
-    "hiscore": 5000,
-    ...
-  }
-  ```
-
-### KudosWorldSeries
-
-- **GET** `/kudosworldseries`
-
-  Retrieves all records from the `KudosWorldSeries` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/kudosworldseries?leaderboard_id=38&name=Jane
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 38,
-      "rank": 1,
-      "name": "JaneDoe",
-      "data_date": "2025-05-01 00:00:00",
-      "location": "Tokyo",
-      "circuit": "Circuit A",
-      "car": "Car X",
-      "kudos": 1200,
-      "folder_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### LeaderboardChallengeKudos
-
-- **GET** `/leaderboardchallengekudos`
-
-  Retrieves all records from the `LeaderboardChallengeKudos` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/leaderboardchallengekudos?leaderboard_id=2
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 2,
-      "rank": 1,
-      "name": "Player2",
-      "data_date": "2025-05-01 00:00:00",
-      "location": "London",
-      "circuit": "Circuit B",
-      "car": "Car Y",
-      "kudos": 1500,
-      "folder_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### LeaderboardChallengeTime
-
-- **GET** `/leaderboardchallengetime`
-
-  Retrieves all records from the `LeaderboardChallengeTime` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/leaderboardchallengetime?name=Alex&leaderboard_id=271
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 271,
-      "rank": 1,
-      "name": "Alex",
-      "data_date": "2025-05-01 00:00:00",
-      "location": "Paris",
-      "circuit": "Circuit C",
-      "car": "Car Z",
-      "time": "1:23.456",
-      "folder_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### Matches
-
-- **GET** `/matches`
-
-  Retrieves all records from the `Matches` table.
-
-  **Query Parameters**:
-
-  - `host` (string): Filter by host name.
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/matches?host=Host1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 0,
-      "host": "Host1",
-      "players": "Player1, Player2, Player3",
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### OG
-
-- **GET** `/og`
-
-  Retrieves all records from the `OG` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/og?leaderboard_id=601
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 601,
-      "rank": 1,
-      "name": "Player3",
-      "score": 3000,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00"
-    },
-    ...
-  ]
-  ```
-
-### OfflineTop10
-
-- **GET** `/offlinetop10`
-
-  Retrieves all records from the `OfflineTop10` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/offlinetop10?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "rank": 1,
-      "name": "Player1",
-      "score": 1000,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### OnlineUsers
-
-- **GET** `/onlineusers`
-
-  Retrieves all records from the `OnlineUsers` table.
-
-  **Query Parameters**:
-
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/onlineusers?data_date=2025-05-01%2000:00:00
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "active_user_count": 50,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00"
-    },
-    ...
-  ]
-  ```
-
-### TimeAttack
-
-- **GET** `/timeattack`
-
-  Retrieves all records from the `TimeAttack` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/timeattack?leaderboard_id=271
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 271,
-      "rank": 1,
-      "name": "Player1",
-      "data_date": "2025-05-01 00:00:00",
-      "location": "Tokyo",
-      "circuit": "Circuit A",
-      "car": "Car X",
-      "time": "1:23.456",
-      "folder_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### TimeAttackTop10
-
-- **GET** `/timeattacktop10`
-
-  Retrieves all records from the `TimeAttackTop10` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/timeattacktop10?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "Player1",
-      "count_1": 100,
-      "count_2": 50,
-      "count_3": 25,
-      "count_4": 10,
-      "count_5": 5,
-      "count_6": 2,
-      "count_7": 1,
-      "count_8": 0,
-      "count_9": 0,
-      "count_10": 0,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### TimeAttackTop3
-
-- **GET** `/timeattacktop3`
-
-  Retrieves all records from the `TimeAttackTop3` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/timeattacktop3?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "Player1",
-      "count_1": 100,
-      "count_2": 50,
-      "count_3": 25,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### Top10
-
-- **GET** `/top10`
-
-  Retrieves all records from the `Top10` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/top10?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "Player1",
-      "count_1": 100,
-      "count_2": 50,
-      "count_3": 25,
-      "count_4": 10,
-      "count_5": 5,
-      "count_6": 2,
-      "count_7": 1,
-      "count_8": 0,
-      "count_9": 0,
-      "count_10": 0,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### Top3
-
-- **GET** `/top3`
-
-  Retrieves all records from the `Top3` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/top3?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "name": "Player1",
-      "count_1": 100,
-      "count_2": 50,
-      "count_3": 25,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-### XBLCity
-
-- **GET** `/xblcity`
-
-  Retrieves all records from the `XBLCity` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/xblcity?name=CityRacer
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 801,
-      "rank": 1,
-      "name": "CityRacer",
-      "kudos": 2000,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00"
-    },
-    ...
-  ]
-  ```
-
-### XBLCityRaces
-
-- **GET** `/xblcityraces`
-
-  Retrieves all records from the `XBLCityRaces` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-
-  **Example**:
-
-  ```bash
-  GET /api/xblcityraces?name=RaceStar
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 901,
-      "name": "RaceStar",
-      "track": "Track A",
-      "opponents": 5,
-      "car": "Car V",
-      "race_date": "2025-05-01 00:00:00",
-      "kudos": 500,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00"
-    },
-    ...
-  ]
-  ```
-
-### XBLTotal
-
-- **GET** `/xbltotal`
-
-  Retrieves all records from the `XBLTotal` table.
-
-  **Query Parameters**:
-
-  - `name` (string): Filter by player name (partial match).
-  - `folder_date` (datetime): Filter by folder date.
-  - `data_date` (datetime): Filter by data date.
-  - `leaderboard_id` (integer): Filter by leaderboard ID.
-
-  **Example**:
-
-  ```bash
-  GET /api/xbltotal?name=Player1
-  ```
-
-  **Response**:
-
-  ```json
-  [
-    {
-      "id": 1,
-      "leaderboard_id": 1,
-      "rank": 1,
-      "name": "Player1",
-      "first_place_finishes": 100,
-      "second_place_finishes": 50,
-      "third_place_finishes": 25,
-      "races_completed": 175,
-      "kudos_rank": 1,
-      "kudos": 10000,
-      "folder_date": "2025-05-01 00:00:00",
-      "data_date": "2025-05-01 00:00:00",
-      "sync_id": "uuid-here"
-    }
-  ]
-  ```
-
-## Error Handling
-
-- **400 Bad Request**: Invalid query parameters or malformed request.
-- **404 Not Found**: Requested resource (e.g., specific ID) not found.
-- **500 Internal Server Error**: Database or server error.
-
-```json
-{
-  "error": "Error message describing the issue"
-}
+```bash
+npm start
 ```
 
-## Setup Instructions
+This will start a local web server on port 8080. Open your browser and navigate to:
+- http://localhost:8080
 
-1. Ensure Node.js is installed.
-2. Install dependencies:
+### Other Scripts
 
-   ```bash
-   npm install express sqlite3 cors
-   ```
+- `npm run dev` - Start server and automatically open in browser
+- `npm run serve` - Alias for `npm start`
 
-3. Place the `leaderboards.db` SQLite database file in the same directory as `server.js`.
-4. Run the server:
+## API Configuration
 
-   ```bash
-   node server.js
-   ```
+Make sure `api2.js` is running on `http://localhost:3000` before using the frontend.
 
-5. The API will be available at `http://localhost:3000/api`.
+To change the API URL, edit the `API_BASE_URL` constant in `app.js`:
+
+```javascript
+const API_BASE_URL = 'http://localhost:3000/api';
+```
+
+## Usage
+
+### Default View
+- On page load, the top 10 players are automatically loaded and displayed
+- The chart shows their kudos progression over the last 30 days
+
+### Load Data by Date
+1. Select a date using the date picker
+2. Optionally select a time
+3. Click "Load Date" to fetch data for that specific date/hour
+
+### Search for a User
+1. Enter a username in the "Search User" field
+2. Click "Search" or press Enter
+3. Results will be displayed in the table
+
+### Add User to Chart
+1. Enter a username in the "Add User to Chart" field
+2. Click "Add" or press Enter
+3. The user's data will be added to the line chart
+4. Selected users are shown as tags below the chart
+5. Click the × button on a tag to remove a user from the chart
+
+### Sorting
+- Use the "Sort By" dropdown to change how the table is sorted
+- Options: Kudos (High to Low), Kudos (Low to High), Rank, Name
+
+### Top N Selection
+- Use the "Show Top" dropdown to change how many players are displayed
+- Options: Top 10, 25, 50, 100, or All
+
+### Reset
+- Click "Reset to Default" to return to the initial top 10 view
+
+## API Endpoints Used
+
+- `GET /api/xbltotal` - Get latest data (defaults to latest sync_id)
+- `GET /api/xbltotal/:date` - Get data for a specific date
+- `GET /api/xbltotal?name=username` - Search for users by name
 
 ## Notes
 
-- Ensure the SQLite database file (`leaderboards.db`) is accessible and contains the schema as defined.
-- The API assumes the database tables are populated with data.
-- For production, consider adding authentication, rate limiting, and input validation.
-- The server runs on port 3000 by default; modify the `port` variable in `server.js` if needed.
+- The chart automatically fetches historical data for the last 30 days when users are added
+- Historical data loading may take a moment, especially for multiple users
+- If a date has no data, it will be skipped in the chart
+- The chart updates in real-time as you add or remove users
+
+## Development
+
+The frontend uses:
+- **Chart.js** (via CDN) - For interactive charts
+- **http-server** - Simple HTTP server for local development
+- Vanilla JavaScript - No build process required
+
+## Port Configuration
+
+By default, the frontend runs on port 8080. To change the port, modify the `start` script in `package.json`:
+
+```json
+"start": "http-server -p YOUR_PORT -c-1 --cors"
+```

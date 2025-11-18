@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Changes - PGR2 Leaderboards</title>
+    <link rel="stylesheet" href="latest-changes.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Latest Changes</h1>
+            <div class="header-actions">
+                <a href="index.html" class="back-btn">← Back to Chart</a>
+            </div>
+        </header>
+
+        <div class="controls-section">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="playerName">Search Player:</label>
+                    <input type="text" id="playerName" placeholder="Enter player name..." />
+                </div>
+                <button id="searchBtn" class="search-btn">Search</button>
+                <button id="refreshBtn" class="refresh-btn">Refresh</button>
+            </div>
+        </div>
+
+        <div class="loading-container" id="loadingContainer" style="display: none;">
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="results-header">
+                <h2>Latest Score Updates</h2>
+                <div class="results-count" id="resultsCount"></div>
+            </div>
+            <div id="resultsContainer"></div>
+            <div class="pagination-controls" id="paginationControls" style="display: none;">
+                <button id="loadMoreBtn" class="load-more-btn">Load More</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="latest-changes.js"></script>
+</body>
+</html>
+

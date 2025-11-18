@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Stats - PGR2 Leaderboards</title>
+    <link rel="stylesheet" href="stats.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>All Stats</h1>
+            <div class="header-actions">
+                <a href="index.html" class="back-btn">← Back to Chart</a>
+                <a href="latest-changes.html" class="back-btn">Latest Changes</a>
+            </div>
+        </header>
+
+        <div class="search-section">
+            <div class="toggle-section" id="toggleSection" style="display: none;">
+                <label class="toggle-label">
+                    <input type="checkbox" id="enableOGToggle" class="toggle-checkbox">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-text">Enable OG</span>
+                </label>
+            </div>
+            <div class="search-controls">
+                <div class="control-group">
+                    <label for="leaderboardSelect">Leaderboard:</label>
+                    <select id="leaderboardSelect" class="leaderboard-select">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="playerName">Player Name:</label>
+                    <input type="text" id="playerName" placeholder="Enter player name..." />
+                </div>
+                <button id="searchBtn" class="search-btn">Search</button>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h2>Results</h2>
+            <div id="resultsContainer"></div>
+        </div>
+
+        <div class="loading-container" id="loadingContainer" style="display: none;">
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="stats.js"></script>
+</body>
+</html>
+

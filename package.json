@@ -1,0 +1,25 @@
+{
+  "name": "xbl-total-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for XBL Total Leaderboard API",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8080 -c-1 --cors",
+    "dev": "http-server -p 8080 -c-1 --cors -o",
+    "serve": "http-server -p 8080 -c-1 --cors",
+    "build": "npm run clean && npm run copy",
+    "clean": "rm -rf dist",
+    "copy": "mkdir -p dist && cp index.html app.js styles.css stats.html stats.js stats.css latest-changes.html latest-changes.js latest-changes.css dist/"
+  },
+  "keywords": [
+    "xbl",
+    "leaderboard",
+    "frontend"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
+
