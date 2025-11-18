@@ -1,17 +1,47 @@
-# XBL Total Leaderboard Frontend
+# PGR2Stats.com Website
 
-A modern, dark-mode frontend for visualizing XBL Total leaderboard data with interactive charts.
+A modern, dark-mode frontend for visualizing PGR2 (Project Gotham Racing 2) leaderboard statistics with interactive charts and comprehensive data browsing.
 
 ## Features
 
-- **Dark Mode Design**: Modern, sleek dark theme interface
-- **Top 10 Default View**: Automatically loads and displays top 10 players by kudos
-- **Interactive Line Chart**: Shows kudos progression over time (daily snapshots)
-- **Date-based Filtering**: Load data for specific dates and times
-- **User Search**: Search for specific users by name
-- **Custom Chart Selection**: Add individual users to the chart for comparison
-- **Sorting Options**: Sort by kudos, rank, or name
-- **Top N Selection**: View top 10, 25, 50, 100, or all players
+### Homepage - Kudos Chart (`index.html`)
+- **Top 10 Kudos Visualization**: Interactive line chart showing the top 10 players by kudos over time
+- **Date Range Filters**: 
+  - All Time (default) - Shows complete historical data
+  - Last 30 Days - Shows kudos gained in the past 30 days
+  - Last 7 Days - Shows kudos gained in the past week
+- **Dynamic Sorting**: Players are automatically sorted by kudos (highest to lowest)
+- **Interactive Tooltips**: Hover over data points to see:
+  - Current kudos value
+  - Daily change (for All Time view)
+  - Total kudos and gain (for 7-day and 30-day views)
+- **Full-Height Chart**: Responsive design optimized for desktop and mobile
+- **Loading Progress Bar**: Visual feedback during data loading
+
+### All Stats Page (`stats.html`)
+- **Comprehensive Leaderboard Browser**: Access all PGR2 leaderboards from a dropdown menu
+- **OG Data Toggle**: Enable/disable OG (original) data merging for supported leaderboards:
+  - Leaderboard IDs: 1-12, 16-17, 37, 38-269, 468-470
+- **Player Search**: Search for specific players across any leaderboard
+- **Smart Data Merging**: When OG toggle is enabled, OG entries are merged with main data and sorted by score/kudos
+- **Special Sorting**:
+  - Leaderboard ID 1: Sorted by kudos (highest to lowest)
+  - Leaderboard ID 15: Sorted by hiscore (highest to lowest)
+  - Other leaderboards: Default sorting
+- **Field Filtering**: Automatically hides technical fields (`id`, `rn`, `sync_id`, `folder_date`) for cleaner display
+- **Responsive Tables**: Clean, organized data presentation
+
+### Latest Changes Page (`latest-changes.html`)
+- **Real-Time Updates**: View the latest score and rank changes across all leaderboards
+- **Player Search**: Filter changes by player name
+- **Pagination**: Load more results with "Load More" button
+- **Detailed Change Cards**: Each change shows:
+  - Leaderboard name
+  - Player name
+  - Score change (old → new with difference indicator)
+  - Rank change (old → new with improvement/decline indicators)
+  - Formatted timestamp (e.g., "Nov 12, 2025, 3:12 AM")
+- **Auto-Refresh**: Refresh button to get the latest updates
 
 ## Installation
 
@@ -20,6 +50,8 @@ npm install
 ```
 
 ## Running the Frontend
+
+### Development Server
 
 ```bash
 npm start
@@ -32,75 +64,136 @@ This will start a local web server on port 8080. Open your browser and navigate 
 
 - `npm run dev` - Start server and automatically open in browser
 - `npm run serve` - Alias for `npm start`
+- `npm run build` - Build for deployment (creates `dist/` folder with all files)
+- `npm run clean` - Remove the `dist/` folder
 
 ## API Configuration
 
-Make sure `api2.js` is running on `http://localhost:3000` before using the frontend.
+The frontend connects to multiple API endpoints:
 
-To change the API URL, edit the `API_BASE_URL` constant in `app.js`:
+### Main APIs
+- **API2 Base URL**: `https://api2.pgr2stats.com/api2` (for leaderboard ID 1)
+- **API Base URL**: `https://api.pgr2stats.com/api` (for all other leaderboards)
+- **Latest Changes API**: `https://lc.pgr2stats.com/api` (for latest changes)
 
-```javascript
-const API_BASE_URL = 'http://localhost:3000/api';
+### API Endpoints Used
+
+#### Homepage (Chart)
+- `GET /api2/xbltotal/chart` - Get historical kudos data for top 10 players (one data point per day)
+
+#### All Stats Page
+- `GET /api2/xbltotal` - Get leaderboard ID 1 data (when selected)
+- `GET /api/{endpoint}?leaderboard_id={id}` - Get data for specific leaderboard
+  - Endpoints: `og`, `geometrywars`, `kudosworldseries`, `timeattack`, `leaderboardchallengekudos`, `leaderboardchallengetime`
+- `GET /api/og?leaderboard_id={id}` - Get OG data (when toggle is enabled)
+- `GET /api/{endpoint}?leaderboard_id={id}&name={playerName}` - Search for players
+
+#### Latest Changes Page
+- `GET /api/latestchanges?page={page}&limit=50` - Get paginated latest changes
+- `GET /api/latestchanges?page={page}&limit=50&name={playerName}` - Search latest changes by player
+
+## Project Structure
+
+```
+frontend/
+├── index.html              # Homepage with kudos chart
+├── app.js                   # Chart logic and data fetching
+├── styles.css              # Homepage styles
+├── stats.html              # All Stats page
+├── stats.js                # All Stats logic
+├── stats.css               # All Stats styles
+├── latest-changes.html     # Latest Changes page
+├── latest-changes.js       # Latest Changes logic
+├── latest-changes.css      # Latest Changes styles
+├── package.json            # npm configuration
+└── dist/                   # Build output (generated by `npm run build`)
 ```
 
 ## Usage
 
-### Default View
-- On page load, the top 10 players are automatically loaded and displayed
-- The chart shows their kudos progression over the last 30 days
+### Homepage - View Top 10 Kudos Chart
 
-### Load Data by Date
-1. Select a date using the date picker
-2. Optionally select a time
-3. Click "Load Date" to fetch data for that specific date/hour
+1. Navigate to `index.html` (or root URL)
+2. The chart automatically loads showing top 10 players by kudos over all time
+3. Use date range buttons to filter:
+   - **All Time**: Complete historical data
+   - **Last 30 Days**: Shows kudos gained in past month
+   - **Last 7 Days**: Shows kudos gained in past week
+4. Hover over data points to see detailed information
 
-### Search for a User
-1. Enter a username in the "Search User" field
-2. Click "Search" or press Enter
-3. Results will be displayed in the table
+### All Stats - Browse Leaderboards
 
-### Add User to Chart
-1. Enter a username in the "Add User to Chart" field
-2. Click "Add" or press Enter
-3. The user's data will be added to the line chart
-4. Selected users are shown as tags below the chart
-5. Click the × button on a tag to remove a user from the chart
+1. Navigate to `stats.html` or click "All Stats" from homepage
+2. Select a leaderboard from the dropdown (IDs 2-14 are hidden)
+3. For supported leaderboards, toggle "Enable OG" to merge OG data
+4. Optionally search for a specific player name
+5. View results in organized tables
 
-### Sorting
-- Use the "Sort By" dropdown to change how the table is sorted
-- Options: Kudos (High to Low), Kudos (Low to High), Rank, Name
+### Latest Changes - View Recent Updates
 
-### Top N Selection
-- Use the "Show Top" dropdown to change how many players are displayed
-- Options: Top 10, 25, 50, 100, or All
+1. Navigate to `latest-changes.html` or click "Latest Changes" from homepage
+2. View the latest score and rank changes
+3. Use the search box to filter by player name
+4. Click "Load More" to see additional results
+5. Click "Refresh" to get the latest updates
 
-### Reset
-- Click "Reset to Default" to return to the initial top 10 view
+## Leaderboard Support
 
-## API Endpoints Used
+### OG Toggle Supported Leaderboards
+The "Enable OG" toggle is available for:
+- **IDs 1-12**: Xbox Live leaderboards (excluding 13, 14, 15)
+- **IDs 16-17**: All Time Ghost Challenges
+- **ID 37**: All Time Ghost Challenge - Nurburgring Speed
+- **IDs 38-269**: Kudos World Series and Arcade Racing leaderboards
+- **IDs 468-470**: All Time Ghost Challenges
 
-- `GET /api/xbltotal` - Get latest data (defaults to latest sync_id)
-- `GET /api/xbltotal/:date` - Get data for a specific date
-- `GET /api/xbltotal?name=username` - Search for users by name
+### Special Leaderboard Handling
+- **ID 1**: Uses API2 endpoint (`/api2/xbltotal`) and supports OG merge
+- **ID 15**: Geometry Wars - sorted by `hiscore`
+- **IDs 2-14**: Hidden from dropdown (not available)
 
-## Notes
+## Technical Details
 
-- The chart automatically fetches historical data for the last 30 days when users are added
-- Historical data loading may take a moment, especially for multiple users
-- If a date has no data, it will be skipped in the chart
-- The chart updates in real-time as you add or remove users
+### Dependencies
+- **Chart.js** (via CDN v4.4.0) - Interactive chart visualization
+- **http-server** - Simple HTTP server for local development
+
+### Browser Support
+- Modern browsers with ES6+ support
+- Responsive design for desktop and mobile devices
+
+### Data Formatting
+- **Dates**: Formatted as "Nov 12, 2025, 3:12 AM" in Latest Changes
+- **Numbers**: Formatted with locale-specific thousand separators
+- **Scores**: Handles both numeric and time-string formats (e.g., "00:49.300")
+
+### Performance
+- Progress tracking for all API requests
+- Pagination for large datasets (Latest Changes)
+- Efficient data merging and sorting on the frontend
 
 ## Development
 
-The frontend uses:
-- **Chart.js** (via CDN) - For interactive charts
-- **http-server** - Simple HTTP server for local development
-- Vanilla JavaScript - No build process required
+### Local Development
+1. Install dependencies: `npm install`
+2. Start the server: `npm start`
+3. Open browser to http://localhost:8080
 
-## Port Configuration
+### Building for Production
+1. Run `npm run build`
+2. Deploy the contents of the `dist/` folder to your web server
 
+### Port Configuration
 By default, the frontend runs on port 8080. To change the port, modify the `start` script in `package.json`:
 
 ```json
 "start": "http-server -p YOUR_PORT -c-1 --cors"
 ```
+
+## Notes
+
+- The chart automatically fetches one data point per day for historical data
+- OG data merging creates separate entries (not merged by name) and sorts by score/kudos
+- All API calls include progress tracking for better user experience
+- The frontend is designed to work with the PGR2Stats.com API infrastructure
+- Mobile-responsive design ensures usability on all devices
