@@ -9,7 +9,7 @@
     "serve": "http-server -p 8080 -c-1 --cors",
     "build": "npm run clean && npm run copy",
     "clean": "rm -rf dist",
-    "copy": "mkdir -p dist && cp index.html app.js styles.css stats.html stats.js stats.css latest-changes.html latest-changes.js latest-changes.css dist/"
+    "copy": "mkdir -p dist && cp index.html app.js styles.css stats.html stats.js stats.css latest-changes.html latest-changes.js latest-changes.css interesting-stats.html interesting-stats.js dist/"
   },
   "keywords": [
     "xbl",

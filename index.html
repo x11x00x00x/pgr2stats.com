@@ -21,13 +21,54 @@
                 <button class="date-range-btn active" data-range="all">All Time</button>
                 <button class="date-range-btn" data-range="30">Last 30 Days</button>
                 <button class="date-range-btn" data-range="7">Last 7 Days</button>
+                <button class="top-n-btn" id="topNBtn" data-top-n="10">Show Top 25</button>
+                <button class="refresh-btn" id="refreshBtn" title="Refresh Data">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                        <path d="M21 3v5h-5"></path>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                        <path d="M3 21v-5h5"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Mobile dropdown menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="mobile-menu-dropdown" id="mobileMenuDropdown">
+                    <button class="mobile-menu-item active" data-range="all">All Time</button>
+                    <button class="mobile-menu-item" data-range="30">Last 30 Days</button>
+                    <button class="mobile-menu-item" data-range="7">Last 7 Days</button>
+                    <button class="mobile-menu-item" id="mobileTopNBtn" data-top-n="10">Show Top 25</button>
+                    <button class="mobile-menu-item" id="mobileRefreshBtn">
+                        <span>Refresh Data</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v-5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                    </button>
+                    <a href="stats.html" class="mobile-menu-item">All Stats</a>
+                    <a href="latest-changes.html" class="mobile-menu-item">Latest Changes</a>
+                    <a href="interesting-stats.html" class="mobile-menu-item">Interesting Stats</a>
+                </div>
             </div>
             <div class="header-buttons">
                 <a href="stats.html" class="other-stats-btn">All Stats</a>
                 <a href="latest-changes.html" class="other-stats-btn">Latest Changes</a>
+                <a href="interesting-stats.html" class="other-stats-btn">Interesting Stats</a>
             </div>
         </div>
         <canvas id="kudosChart"></canvas>
+        <div class="footer" id="footer">
+            <span class="last-sync-text">Last synced: <span id="lastSyncTime">Loading...</span></span>
+        </div>
     </div>
 
     <script src="app.js"></script>
